@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolProject.Application.Features.Departments.Queries.Models;
+using SchoolProject.Application.UseCases.Departments.Queries.Models;
 using SchoolProject.Presentation.Base;
 using SchoolProject.Presentation.MetaData;
 

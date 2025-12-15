@@ -1,4 +1,4 @@
-﻿using SchoolProject.Application.Features.ApplicationUsers.Queries.Results;
+﻿using SchoolProject.Application.UseCases.ApplicationUsers.Queries.Results;
 using SchoolProject.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ public partial class ApplicationUserProfile
 {
    public void GetSingleUserQueryMapping()
    {
-      CreateMap<ApplicationUser, GetSingleUserResponse>()
+      CreateMap<ApplicationUser, SingleUserResult>()
          .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
          .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
          .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))

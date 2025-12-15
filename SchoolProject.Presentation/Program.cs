@@ -109,11 +109,11 @@ public class Program
 
       using (var scope = app.Services.CreateScope())
       {
-         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
          var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-         await ApplicationUserSeeder.SeedAsync(userManager);
          await ApplicationRoleSeeder.SeedAsync(roleManager);
+         await ApplicationUserSeeder.SeedAsync(userManager);
 
       }
 

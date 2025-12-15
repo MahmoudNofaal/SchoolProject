@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolProject.Application.Features.Students.Commands.Models;
-using SchoolProject.Application.Features.Students.Queries.Models;
+using SchoolProject.Application.UseCases.Students.Commands.Models;
+using SchoolProject.Application.UseCases.Students.Queries.Models;
 using SchoolProject.Presentation.Base;
 using SchoolProject.Presentation.MetaData;
 

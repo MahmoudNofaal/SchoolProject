@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolProject.Application.Features.ApplicationUsers.Commands.Models;
-using SchoolProject.Application.Features.ApplicationUsers.Queries.Models;
+using SchoolProject.Application.UseCases.ApplicationUsers.Commands.Models;
+using SchoolProject.Application.UseCases.ApplicationUsers.Queries.Models;
 using SchoolProject.Presentation.Base;
 using SchoolProject.Presentation.MetaData;
 

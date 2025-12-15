@@ -1,4 +1,4 @@
-﻿using SchoolProject.Application.Features.ApplicationUsers.Commands.Models;
+﻿using SchoolProject.Application.UseCases.ApplicationUsers.Commands.Models;
 using SchoolProject.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;

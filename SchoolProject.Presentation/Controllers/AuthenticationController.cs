@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolProject.Application.Features.Authentication.Commands.Models;
-using SchoolProject.Application.Features.Authentication.Queries.Models;
+using SchoolProject.Application.UseCases.Authentication.Commands.Models;
+using SchoolProject.Application.UseCases.Authentication.Queries.Models;
 using SchoolProject.Presentation.Base;
 using SchoolProject.Presentation.MetaData;
 

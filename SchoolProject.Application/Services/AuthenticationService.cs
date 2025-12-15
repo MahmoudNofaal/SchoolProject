@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SchoolProject.Application.Services.Abstractions;
@@ -8,9 +7,6 @@ using SchoolProject.Domain.Entities.Identity;
 using SchoolProject.Domain.Helpers;
 using SchoolProject.Domain.Results;
 using SchoolProject.Infrastructure.Repositories.Abstractionss;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -35,9 +31,9 @@ public class AuthenticationService : IAuthenticationService
 
 
    #region Private Helper Methods
-   private (JwtSecurityToken, string) GenerateAccessToken(ApplicationUser user)
+   private async Task<(JwtSecurityToken, string)> GenerateAccessToken(ApplicationUser user)
    {
-      var claims = this.GetUserClaims(user);
+      var claims = await this.GetUserClaims(user);
 
       var encodedKey = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
 
@@ -60,15 +56,25 @@ public class AuthenticationService : IAuthenticationService
       return (jwtToken, accessToken);
    }
 
-   private List<Claim> GetUserClaims(ApplicationUser user)
+   private async Task<List<Claim>> GetUserClaims(ApplicationUser user)
    {
-      return new List<Claim>()
+      var roles = await _userManager.GetRolesAsync(user);
+
+      var claims = new List<Claim>()
       {
+         new Claim((ClaimTypes.NameIdentifier), user.Id.ToString()),
          new Claim(nameof(UserClaimModel.Id), user.Id.ToString()),
-         new Claim(nameof(UserClaimModel.UserName), user.UserName ?? ""),
-         new Claim(nameof(UserClaimModel.Email), user.Email ?? ""),
-         new Claim(nameof(UserClaimModel.PhoneNumber), user.PhoneNumber ?? ""),
+         new Claim((ClaimTypes.Name), user.UserName),
+         new Claim((ClaimTypes.Email), user.Email),
+         new Claim((ClaimTypes.MobilePhone), user.PhoneNumber),
       };
+
+      foreach (var item in roles)
+      {
+         claims.Add(new Claim((ClaimTypes.Role), item));
+      }
+
+      return claims;
    }
 
    private string GetRefreshToken()
@@ -104,7 +110,7 @@ public class AuthenticationService : IAuthenticationService
       //var accessToken = this.GenerateAccessToken(user).Item2;
 
       // way 2 to use tuple
-      var (jwtToken, accessToken) = this.GenerateAccessToken(user);
+      var (jwtToken, accessToken) = await this.GenerateAccessToken(user);
 
       var refreshToken = this.GenerateRefreshToken(user);
 
@@ -139,7 +145,7 @@ public class AuthenticationService : IAuthenticationService
       (ApplicationUser user, UserRefreshToken userRefreshToken)
    {
       // Generate RefreshToken
-      var newAccessToken = this.GenerateAccessToken(user);
+      var newAccessToken = await this.GenerateAccessToken(user);
 
       userRefreshToken.AccessToken = newAccessToken.Item2;
       await _refreshTokenRepository.UpdateAsync(userRefreshToken);
