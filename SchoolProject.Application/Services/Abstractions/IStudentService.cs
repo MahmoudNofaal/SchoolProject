@@ -1,5 +1,5 @@
 ﻿using SchoolProject.Domain.Entities;
-using SchoolProject.Domain.Helpers;
+using SchoolProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

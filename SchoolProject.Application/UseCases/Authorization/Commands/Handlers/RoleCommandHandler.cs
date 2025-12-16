@@ -6,25 +6,24 @@ using SchoolProject.Application.Resources;
 using SchoolProject.Application.Services.Abstractions;
 using SchoolProject.Application.UseCases.Authorization.Commands.Models;
 using SchoolProject.Domain.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolProject.Application.UseCases.Authorization.Commands.Handlers;
 
-public class AuthorizationCommandHandler : ResponseHandler,
+public class RoleCommandHandler : ResponseHandler,
                                            ICommandHandler<AddRoleCommand, Response<string>>,
                                            ICommandHandler<EditRoleCommand, Response<string>>,
-                                           ICommandHandler<DeleteRoleCommand, Response<string>>
+                                           ICommandHandler<DeleteRoleCommand, Response<string>>,
+                                           ICommandHandler<UpdateUserRolesCommand, Response<string>>
 {
    private readonly IAuthorizationService _authorizationService;
+   private readonly UserManager<ApplicationUser> _userManager;
 
-   public AuthorizationCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
-                                      IAuthorizationService authorizationService) : base(stringLocalizer)
+   public RoleCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
+                                      IAuthorizationService authorizationService,
+                                      UserManager<ApplicationUser> userManager) : base(stringLocalizer)
    {
       this._authorizationService = authorizationService;
+      this._userManager = userManager;
    }
 
    #region Add Role - Handle
@@ -63,6 +62,27 @@ public class AuthorizationCommandHandler : ResponseHandler,
       if (result == "Success")
       {
          return Success("Role deleted successfully");
+      }
+
+      return BadRequest<string>(result);
+   }
+   #endregion
+
+   #region Update User Roles - Handle
+   public async Task<Response<string>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
+   {
+      var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+
+      if (user == null)
+      {
+         return NotFound<string>();
+      }
+
+      var result = await _authorizationService.UpdateUserRolesAsync(user, request.Roles.ToList());
+
+      if (result == "Success")
+      {
+         return Success("User roles updated successfully.");
       }
 
       return BadRequest<string>(result);

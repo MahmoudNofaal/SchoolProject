@@ -14,6 +14,7 @@ namespace SchoolProject.Presentation.Controllers;
 public class AuthorizationController : AppControllerBase
 {
 
+   #region AddRole
    [HttpPost(AuthorizationRoutes.CreateRole)]
    public async Task<IActionResult> AddRole([FromBody] AddRoleCommand command)
    {
@@ -21,7 +22,9 @@ public class AuthorizationController : AppControllerBase
 
       return NewResult(result);
    }
+   #endregion
 
+   #region EditRole
    [HttpPut(AuthorizationRoutes.EditRole)]
    public async Task<IActionResult> EditRole([FromBody] EditRoleCommand command)
    {
@@ -29,7 +32,9 @@ public class AuthorizationController : AppControllerBase
 
       return NewResult(result);
    }
+   #endregion
 
+   #region DeleteRole
    [HttpDelete(AuthorizationRoutes.DeleteRole)]
    public async Task<IActionResult> DeleteRole([FromRoute] int id)
    {
@@ -37,7 +42,9 @@ public class AuthorizationController : AppControllerBase
 
       return NewResult(result);
    }
+   #endregion
 
+   #region RoleList
    [HttpGet(AuthorizationRoutes.RoleList)]
    [AllowAnonymous]
    public async Task<IActionResult> RoleList()
@@ -46,7 +53,9 @@ public class AuthorizationController : AppControllerBase
 
       return NewResult(result);
    }
+   #endregion
 
+   #region SingleRole
    [HttpGet(AuthorizationRoutes.SingleRole)]
    [AllowAnonymous]
    public async Task<IActionResult> SingleRole([FromRoute] int id)
@@ -55,6 +64,51 @@ public class AuthorizationController : AppControllerBase
 
       return NewResult(result);
    }
+   #endregion
+
+   #region GetUserRoles
+   [HttpGet(AuthorizationRoutes.GetUserRoles)]
+   [AllowAnonymous]
+   public async Task<IActionResult> GetUserRoles([FromRoute] int id)
+   {
+      var result = await Mediator.Send(new GetUserRolesQuery(id));
+
+      return NewResult(result);
+   }
+   #endregion
+
+   #region UpdateUserRoles
+   [HttpPut(AuthorizationRoutes.UpdateUserRoles)]
+   [AllowAnonymous]
+   public async Task<IActionResult> UpdateUserRoles([FromBody] UpdateUserRolesCommand command)
+   {
+      var result = await Mediator.Send(command);
+
+      return NewResult(result);
+   }
+   #endregion
+
+   #region GetUserClaims
+   [HttpGet(AuthorizationRoutes.GetUserClaims)]
+   [AllowAnonymous]
+   public async Task<IActionResult> GetUserClaims([FromRoute] int id)
+   {
+      var result = await Mediator.Send(new GetUserClaimsQuery(id));
+
+      return NewResult(result);
+   }
+   #endregion
+
+   #region UpdateUserClaims
+   [HttpPut(AuthorizationRoutes.UpdateUserClaims)]
+   [AllowAnonymous]
+   public async Task<IActionResult> UpdateUserClaims([FromBody] UpdateUserClaimsCommand command)
+   {
+      var result = await Mediator.Send(command);
+
+      return NewResult(result);
+   }
+   #endregion
 
 
 }

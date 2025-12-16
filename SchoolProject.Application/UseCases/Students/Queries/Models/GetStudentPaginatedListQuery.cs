@@ -1,7 +1,7 @@
 ﻿using SchoolProject.Application.Bases.CQRS;
 using SchoolProject.Application.UseCases.Students.Queries.Results;
 using SchoolProject.Application.Wrappers;
-using SchoolProject.Domain.Helpers;
+using SchoolProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolProject.Application.Services.Abstractions;
 using SchoolProject.Domain.Entities;
-using SchoolProject.Domain.Helpers;
+using SchoolProject.Domain.Enums;
 using SchoolProject.Infrastructure.Repositories.Abstractionss;
 using System;
 using System.Collections.Generic;
