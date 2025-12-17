@@ -3,6 +3,7 @@ using SchoolProject.Application.Bases;
 using SchoolProject.Application.Bases.CQRS;
 using SchoolProject.Application.Resources;
 using SchoolProject.Application.Services.Abstractions;
+using SchoolProject.Application.UseCases.Authentication.Commands.Models;
 using SchoolProject.Application.UseCases.Authentication.Queries.Models;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ public class AuthenticationUserQueryHandler : ResponseHandler,
       }
 
       return BadRequest<string>("Token is not valid!");
-   } 
+   }
    #endregion
 
 }

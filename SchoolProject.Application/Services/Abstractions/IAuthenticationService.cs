@@ -20,4 +20,6 @@ public interface IAuthenticationService
 
    Task<string> ValidateAccessToken(string accessToken);
 
+   Task<string> ConfirmUserEmailAsync(ApplicationUser user, string code);
+
 }

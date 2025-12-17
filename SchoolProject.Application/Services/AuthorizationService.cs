@@ -105,9 +105,6 @@ public class AuthorizationService : IAuthorizationService
    #region Get Roles And User Roles
    public async Task<UserRolesResult> GetRolesAndUserRolesAsync(ApplicationUser user)
    {
-      // get userClaims 
-      var userRoles = await _userManager.GetRolesAsync(user);
-
       // get system roles
       var roles = await _roleManager.Roles.ToListAsync();
 
@@ -126,7 +123,7 @@ public class AuthorizationService : IAuthorizationService
          };
 
          // check if the userClaims contains claim to true HasRole
-         if (userRoles.Contains(role.Name))
+         if (await _userManager.IsInRoleAsync(user, role.Name))
          {
             roleResult.HasRole = true;
          }

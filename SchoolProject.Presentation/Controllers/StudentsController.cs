@@ -11,11 +11,11 @@ namespace SchoolProject.Presentation.Controllers;
 
 //[Route("api/[controller]")]
 [ApiController]
-//[Authorize(Roles = "Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class StudentsController : AppControllerBase
 {
 
+   #region GetStudentsList
    [HttpGet(StudentRoutes.GetList)]
    public async Task<IActionResult> GetStudentsList()
    {
@@ -24,9 +24,10 @@ public class StudentsController : AppControllerBase
       //return Ok(response);
       return NewResult(response);
    }
+   #endregion
 
+   #region Paginated
    [HttpGet(StudentRoutes.Paginated)]
-   [AllowAnonymous]
    public async Task<IActionResult> Paginated([FromQuery] GetStudentPaginatedListQuery query)
    {
       var response = await Mediator.Send(query);
@@ -34,7 +35,9 @@ public class StudentsController : AppControllerBase
       //return Ok(response);
       return Ok(response);
    }
+   #endregion
 
+   #region GetStudentById
    [HttpGet(StudentRoutes.GetById)]
    public async Task<IActionResult> GetStudentById([FromRoute] int id)
    {
@@ -43,8 +46,10 @@ public class StudentsController : AppControllerBase
       //return Ok(response);
       return NewResult(response);
    }
+   #endregion
 
-
+   #region CreateStudent
+   [Authorize(Policy = "CreateStudent")]
    [HttpPost(StudentRoutes.Create)]
    public async Task<IActionResult> CreateStudent([FromBody] AddStudentCommand command)
    {
@@ -53,7 +58,10 @@ public class StudentsController : AppControllerBase
       //return Ok(response);
       return NewResult(response);
    }
+   #endregion
 
+   #region EditStudent
+   [Authorize(Policy = "EditStudent")]
    [HttpPut(StudentRoutes.Edit)]
    public async Task<IActionResult> EditStudent([FromBody] EditStudentCommand command)
    {
@@ -62,7 +70,10 @@ public class StudentsController : AppControllerBase
       //return Ok(response);
       return NewResult(response);
    }
+   #endregion
 
+   #region DeleteStudent
+   [Authorize(Policy = "DeleteStudent")]
    [HttpDelete(StudentRoutes.Delete)]
    public async Task<IActionResult> DeleteStudent([FromRoute] int id)
    {
@@ -70,6 +81,7 @@ public class StudentsController : AppControllerBase
 
       //return Ok(response);
       return NewResult(response);
-   }
+   } 
+   #endregion
 
 }

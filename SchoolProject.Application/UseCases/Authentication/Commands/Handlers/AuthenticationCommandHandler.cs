@@ -7,15 +7,13 @@ using SchoolProject.Application.Services.Abstractions;
 using SchoolProject.Application.UseCases.Authentication.Commands.Models;
 using SchoolProject.Domain.Entities.Identity;
 using SchoolProject.Domain.Results;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SchoolProject.Application.UseCases.Authentication.Commands.Handlers;
 
 public class AuthenticationCommandHandler : ResponseHandler,
                                             ICommandHandler<SignInCommand, Response<JwtAuthenticationResult>>,
-                                            ICommandHandler<RefreshTokenCommand, Response<JwtAuthenticationResult>>
+                                            ICommandHandler<RefreshTokenCommand, Response<JwtAuthenticationResult>>,
+                                            ICommandHandler<ConfirmUserEmailCommand, Response<string>>
 {
    private readonly UserManager<ApplicationUser> _userManager;
    private readonly SignInManager<ApplicationUser> _signInManager;
@@ -52,10 +50,16 @@ public class AuthenticationCommandHandler : ResponseHandler,
          return BadRequest<JwtAuthenticationResult>();
       }
 
-      // 6. generate token
+      // 5. check is email is confirmed
+      if (!user.EmailConfirmed)
+      {
+         return BadRequest<JwtAuthenticationResult>();
+      }
+
+      // 7. generate token
       var resultToken = await _authenticationService.GenerateJWTTokenAsync(user);
 
-      // 7. return token
+      // 8. return token
       return Success(resultToken);
    }
    #endregion
@@ -87,6 +91,27 @@ public class AuthenticationCommandHandler : ResponseHandler,
       var result = await _authenticationService.RefreshTokenAsync(user, validateResult_userId.Item2);
 
       return Success(result);
+   }
+   #endregion
+
+   #region Confirm User Email
+   public async Task<Response<string>> Handle(ConfirmUserEmailCommand request, CancellationToken cancellationToken)
+   {
+      var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+
+      if (user is null)
+      {
+         return BadRequest<string>();
+      }
+
+      var result = await _authenticationService.ConfirmUserEmailAsync(user, request.Code);
+
+      if (result == "Success")
+      {
+         return Success("Email confirmed successfully");
+      }
+
+      return BadRequest<string>();
    }
    #endregion
 

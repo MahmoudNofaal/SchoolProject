@@ -25,6 +25,8 @@ public static class ModuleApplicationDependencies
       services.AddTransient<IDepartmentService, DepartmentService>();
       services.AddTransient<IAuthenticationService, AuthenticationService>();
       services.AddTransient<IAuthorizationService, AuthorizationService>();
+      services.AddTransient<IEmailService, EmailService>();
+      services.AddTransient<IApplicationUserService, ApplicationUserService>();
 
       // MediatR
       services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
@@ -36,9 +38,15 @@ public static class ModuleApplicationDependencies
       services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
       services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Behaviors.ValidationBehavior<,>));
 
+      #region Email Configuration
+      var emailSettings = new EmailSettings();
+
+      configuration.GetSection(nameof(emailSettings)).Bind(emailSettings);
+
+      services.AddSingleton(emailSettings);
+      #endregion
 
       #region Identity
-
       services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
       {
          // Password settings.
@@ -57,12 +65,10 @@ public static class ModuleApplicationDependencies
          // User settings.
          options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
          options.User.RequireUniqueEmail = true;
-         //options.SignIn.RequireConfirmedEmail = true;
-
+         options.SignIn.RequireConfirmedEmail = true;
       })
       .AddEntityFrameworkStores<ApplicationDbContext>()
       .AddDefaultTokenProviders();
-
       #endregion
 
       #region Authentication - JWT(JSON Web Token) Bearer Token
@@ -92,9 +98,32 @@ public static class ModuleApplicationDependencies
             ValidateLifetime = jwtSettings.ValidateLifetime
          };
       });
-
       #endregion
 
+      #region Authorization - Policy
+      services.AddAuthorization(options =>
+      {
+         // set policy name
+         options.AddPolicy("CreateStudent", policy =>
+         {
+            // set claim type and value
+            policy.RequireClaim("Create", "True");
+         });
+
+         options.AddPolicy("EditStudent", policy =>
+         {
+            // set claim type and value
+            policy.RequireClaim("Edit", "True");
+         });
+
+         options.AddPolicy("DeleteStudent", policy =>
+         {
+            // set claim type and value
+            policy.RequireClaim("Delete", "True");
+         });
+
+      });
+      #endregion
 
       return services;
    }

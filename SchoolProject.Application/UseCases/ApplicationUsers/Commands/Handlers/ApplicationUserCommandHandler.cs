@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using SchoolProject.Application.Bases;
 using SchoolProject.Application.Bases.CQRS;
 using SchoolProject.Application.Resources;
+using SchoolProject.Application.Services.Abstractions;
 using SchoolProject.Application.UseCases.ApplicationUsers.Commands.Models;
 using SchoolProject.Domain.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SchoolProject.Application.UseCases.ApplicationUsers.Commands.Handlers;
 
@@ -22,14 +19,17 @@ public class ApplicationUserCommandHandler : ResponseHandler,
    private readonly IStringLocalizer<SharedResources> _stringLocalizer;
    private readonly IMapper _mapper;
    private readonly UserManager<ApplicationUser> _userManager;
+   private readonly IApplicationUserService _applicationUserService;
 
    public ApplicationUserCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
                                         IMapper mapper,
-                                        UserManager<ApplicationUser> userManager) : base(stringLocalizer)
+                                        UserManager<ApplicationUser> userManager,
+                                        IApplicationUserService applicationUserService) : base(stringLocalizer)
    {
       this._stringLocalizer = stringLocalizer;
       this._mapper = mapper;
       this._userManager = userManager;
+      this._applicationUserService = applicationUserService;
    }
 
    #region Add User - Handle
@@ -48,23 +48,15 @@ public class ApplicationUserCommandHandler : ResponseHandler,
       var userToCreate = _mapper.Map<ApplicationUser>(request);
 
       // 4. Create new user
-      var resultOfCreate = await _userManager.CreateAsync(userToCreate, request.Password);
+      var result = await _applicationUserService.CreateUserAsync(userToCreate, request.Password);
 
-      // 5. Check result if true
-      if (!resultOfCreate.Succeeded)
+      if (result == "Success")
       {
-         return BadRequest<string>("Failed to create user");
+         // 6. Return success
+         return Created("User created successfully.");
       }
 
-      // 5. Assign User to User Role
-      var assignRoleResult = await _userManager.AddToRoleAsync(userToCreate, "User");
-      if (!assignRoleResult.Succeeded)
-      {
-         return BadRequest<string>();
-      }
-
-      // 6. Return success
-      return Created("User created successfully.");
+      return BadRequest<string>();
    }
    #endregion
 

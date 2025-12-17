@@ -7,6 +7,7 @@ public static class AuthenticationRoutes
    public const string SignIn = Prefix + "/signin";
    public const string RefreshToken = Prefix + "/refresh-token";
    public const string ValidateToken = Prefix + "/validate-token";
+   public const string ConfirmEmail = Prefix + "/confirm-email";
 
 }
 

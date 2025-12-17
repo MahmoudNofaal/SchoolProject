@@ -58,7 +58,8 @@ public class AuthenticationService : IAuthenticationService
 
    private async Task<List<Claim>> GetUserClaims(ApplicationUser user)
    {
-      var roles = await _userManager.GetRolesAsync(user);
+      var userRoles = await _userManager.GetRolesAsync(user);
+      var userClaims = await _userManager.GetClaimsAsync(user);
 
       var claims = new List<Claim>()
       {
@@ -69,10 +70,12 @@ public class AuthenticationService : IAuthenticationService
          new Claim((ClaimTypes.MobilePhone), user.PhoneNumber),
       };
 
-      foreach (var item in roles)
+      foreach (var item in userRoles)
       {
          claims.Add(new Claim((ClaimTypes.Role), item));
       }
+
+      claims.AddRange(userClaims);
 
       return claims;
    }
@@ -253,6 +256,19 @@ public class AuthenticationService : IAuthenticationService
 
       // validate completed
       return (userId, userRefreshToken);
+   }
+
+
+   public async Task<string> ConfirmUserEmailAsync(ApplicationUser user, string code)
+   {
+      var confirmEmailResult = await _userManager.ConfirmEmailAsync(user, code);
+
+      if (confirmEmailResult.Succeeded)
+      {
+         return "Success";
+      }
+
+      return "false";
    }
 
 

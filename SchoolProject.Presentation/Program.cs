@@ -1,19 +1,16 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolProject.Application;
 using SchoolProject.Domain;
 using SchoolProject.Domain.Entities.Identity;
-using SchoolProject.Domain.Helpers;
 using SchoolProject.Infrastructure;
-using SchoolProject.Infrastructure.Context;
 using SchoolProject.Infrastructure.Seeder;
 using System.Globalization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolProject.Presentation;
 
@@ -84,6 +81,7 @@ public class Program
       #endregion
 
       #region CORS Configuration
+
       var school_mobile = "School_Mobile";
       builder.Services.AddCors(options =>
       {
@@ -95,12 +93,27 @@ public class Program
                                     .AllowAnyMethod();
                            });
       });
+
       #endregion
 
       #region Dependencies (Dependency Injection)
       builder.Services.AddInfrastructureDependencies(builder.Configuration)
                       .AddApplicationDependencies(builder.Configuration)
                       .AddDomainDependencies();
+      #endregion
+
+      #region Configure HTTP Accessor
+
+      builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+      builder.Services.AddTransient<IUrlHelper>(x =>
+      {
+         var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+         var factory = x.GetRequiredService<IUrlHelperFactory>();
+         return factory.GetUrlHelper(actionContext);
+      });
+
+      //builder.Services.AddTransient<AuthFilter>();
+
       #endregion
 
       var app = builder.Build();
